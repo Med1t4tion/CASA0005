@@ -15,29 +15,29 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r cars}
-```{r}
+
 library(sf)
 library(here)
 library(janitor)
 library(tidyverse)
 library(terra)
 library(ggplot2)
-
+```{r}
 ```
 
 Read in data
 
 ```{r}
-spain <- sf::st_read(here("homework_3", "gadm41_ESP.gpkg"),
+spain <- sf::st_read(here("homework3", "gadm41_ESP.gpkg"),
                       layer='ADM_ADM_0')
 
-world_cities <- sf::st_read(here("homework_3", "World_Cities", "World_cities.shp"))
+world_cities <- sf::st_read(here("homework3",  "World_cities.shp"))
 
-ssp1 <-terra::rast(here("homework_3", "wc2.1_2.5m_tmax_ACCESS-CM2_ssp126_2021-2040.tif"))
+ssp1 <-terra::rast(here("homework3", "wc2.1_2.5m_tmin_ACCESS-CM2_ssp126_2081-2100.tif"))
 
 ssp1_mean <- mean(ssp1)
 
-ssp5 <-terra::rast(here("homework_3", "wc2.1_2.5m_tmax_ACCESS-CM2_ssp585_2021-2040.tif"))
+ssp5 <-terra::rast(here("homework3", "wc2.1_2.5m_tmax_ACCESS-CM2_ssp585_2081-2100.tif"))
 
 ```
 
@@ -93,6 +93,7 @@ month <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun",
 
 names(diff_climate_model) <- month
 
+####extract 掩膜函数mask()：保持矢量数据实际范围内的属性数据不变，而将范围外的属性数据都转为其他值（默认转换为空值NA）
 spain_city_diff<- terra::extract(diff_climate_model, spanish_cities)
 
 ```
@@ -120,7 +121,7 @@ spain_city_diff2 <- spanish_cities %>%
 Or make a join ID column in the original point sf and use that to join...
 
 ```{r}
-
+####mutate 用于创建新变量
 spanish_cities_join_ID <- spanish_cities %>%
   dplyr::mutate(join_id= 1:n())
 ```

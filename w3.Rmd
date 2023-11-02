@@ -67,6 +67,10 @@ library(fs)
 dir_info("wc2.1_5m_tavg/") 
 
 
+
+
+
+
 library(tidyverse)
 
 listfiles<-dir_info("wc2.1_5m_tavg/") %>%
@@ -160,6 +164,7 @@ Austemp <- Ausoutline %>%
   terra::crop(worldclimtemp,.)
 # plot the output
 plot(Austemp)
+#掩膜函数mask()：保持矢量数据实际范围内的属性数据不变，而将范围外的属性数据都转为其他值（默认转换为空值NA）
 exactAus<-terra::mask(Austemp, Ausoutline)
 #subset using the known location of the raster
 hist(exactAus[[3]], col="red", main ="March temperature")
