@@ -1,0 +1,55 @@
+---
+title: "hw3"
+output: html_document
+date: "2023-10-27"
+---
+
+```{r cars}
+library(sf)
+library(here)
+library(raster)
+library(terra)
+library(ggplot2)
+library(janitor)
+library(tidyverse)
+
+
+st_layers(here("homework3", "gadm41_ESP.gpkg"))
+spain <- st_read(here("homework3", "gadm41_ESP.gpkg"), layer='ADM_ADM_0')
+ssp5<-terra::rast(here("homework3", "wc2.1_2.5m_tmax_ACCESS-CM2_ssp585_2081-2100.tif"))
+ssp1<-terra::rast(here("homework3", "wc2.1_2.5m_tmin_ACCESS-CM2_ssp126_2081-2100.tif"))
+world_cities <- sf::st_read(here("homework3", "World_cities.shp"))
+
+
+spanish_cities <- world_cities %>%
+  janitor::clean_names()%>%
+  dplyr::filter(cntry_name=="Spain")
+
+
+spainssp1 <- spain %>%
+  terra::crop(ssp1,.)
+exactssp1<-terra::mask(spainssp1, spain)
+spainssp5 <- spain %>%
+  terra::crop(ssp5,.)
+exactssp5<-terra::mask(spainssp5, spain)
+
+diff <- exactssp1 - exactssp5
+
+
+month <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+           "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+names(diff) <- month
+spa_diff <- terra::extract(diff, spanish_cities)
+```
+
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
