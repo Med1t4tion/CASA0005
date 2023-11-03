@@ -1,0 +1,53 @@
+---
+title: "w4hw"
+output: html_document
+date: "2023-11-02"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+# install.packages("devtools")
+devtools::install_github("r-lib/conflicted")
+library(tidyverse)
+library(sf)
+library(here)
+library(janitor)
+library(countrycode)
+
+HDR <- read.csv("D:\\UCL\\CASA0005\\WEEK4\\homework4\\HDR21-22_Composite_indices_complete_time_series.csv")
+worldmap <- st_read("D:\\UCL\\CASA0005\\WEEK4\\homework4\\World_Countries_Generalized\\World_Countries_Generalized.shp")
+
+GII <- HDR %>%
+  clean_names() %>%
+  select(iso3, country, gii_2010, gii_2019)
+
+GII %>%
+  mutate(difference=gii_2019-gii_2010)%>%
+  mutate(iso2=countrycode(iso3,origin='iso3c',destination='iso2c'))
+
+joined_map <- worldmap%>%
+  clean_names()%>%
+  left_join(.,
+            GII,
+            by = c("country"="country"))
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
